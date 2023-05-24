@@ -37,4 +37,5 @@ public class CmtController {
     public int deleteBoardCmt(BoardCmtDelDto dto) {
         return service.delBoardCmt(dto);
     }
+
 }
