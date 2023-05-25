@@ -1,27 +1,41 @@
 package com.green.board7.fileupload;
 
-import com.green.board7.fileupload.model.FileEntity;
-import com.green.board7.fileupload.model.FileuploadInsDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.green.board7.fileupload.model.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.core.io.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.UUID;
 
 @Service
 public class FileuploadService {
     private FileuploadMapper mapper;
 
+    @Value("${file.dir}")   //경로 주소가 들어간다
+    private String fileDir; //경로 주소가 들어간다
+
     @Autowired
     public FileuploadService(FileuploadMapper mapper) {
         this.mapper = mapper;
     }
 
-    @Value("${file.dir}")   //경로주소가 들어간다
-    private String fileDir; //경로주소가 들어간다
+    public Resource fileLoad(FileLoadDto dto) {
+        FileEntity entity = mapper.selFileById(dto);
+        try {
+            File file = new File(fileDir + entity.getPath());
+            Resource resource = new UrlResource(file.toURI());
+            if (resource.exists()) {
+                return resource;
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();    //실제로 로그남겨야 한다.
+        }
+        return null;
+    }
 
     public void fileUpload(FileuploadInsDto dto, MultipartFile img) {
         System.out.println("fileDir : " + fileDir);
@@ -42,16 +56,14 @@ public class FileuploadService {
             img.transferTo(file);
 
             FileEntity entity = FileEntity.builder()    //빌더는 생성자 노가다를 하지않고 멤버필드를 골라서 값을 넣기 위해서 쓴다
-                    .path(savedFilePath)
+                    .path(savedFileName)
                     .uploader(dto.getUploader())
                     .levelValue(dto.getLevelValue())
                     .build();
-
             mapper.insFile(entity);
+
         } catch (IOException e) {   //없으면 뿌려라
             e.printStackTrace();
         }
     }
-
-
 }
