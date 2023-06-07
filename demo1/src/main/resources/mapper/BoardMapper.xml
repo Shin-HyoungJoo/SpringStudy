@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.BoardMapper">
+    <insert id = "insBoard">
+        INSERT INTO t_board
+        (title, ctnt, iuser)
+        VALUES
+        (#{title}, #{ctnt}, #{iuser})
+    </insert>
+
+    <update id="updBoard">
+        UPDATE t_board
+        SET
+        title = #{title},
+        ctnt = #{ctnt}
+        WHERE iboard = #{iboard}
+        AND iuser = #{iuser}
+    </update>
+
+    <delete id="delBoard">
+        DELETE FROM t_board
+        WHERE iboard = #{iboard}
+        AND iuser = #{iuser}
+    </delete>
+
+    <select id="selBoard">
+        SELECT A.iboard, A.title, A.created_at, B.nm writer, B.main_pic
+        FROM t_board A
+        INNER JOIN t_user B
+        ON A.iuser = B.iuser
+        ORDER BY iboard desc
+        LIMIT #{startIdx}, #{row}
+    </select>
+
+    <select id="selBoardDetail">
+        SELECT A.iboard, A.title, A.ctnt, A.created_at, A.updated_at, B.nm writer, B.main_pic
+        FROM t_board A
+        INNER JOIN t_user B
+        ON A.iuser = B.iuser
+        WHERE iboard = #{iboard}
+    </select>
+
+
+</mapper>

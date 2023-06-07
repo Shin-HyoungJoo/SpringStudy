@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.BoardMapper">
+    <insert id = "insUser">
+        INSERT INTO t_user
+        (uid, pw, nm, gender, addr)
+        VALUES
+        (#{uid}, #{pw}, #{nm}, #{gender}, #{addr})
+    </insert>
+
+    <update id="updUser">
+        UPDATE t_user
+        SET
+        <choose>
+            <when test="pw > 0 and addr == null">
+                pw = #{pw}
+            </when>
+            <when test="pw == 0 and addr != null">
+                addr = #{addr}
+            </when>
+            <when test="pw > 0 and addr != null">
+                pw = #{pw},
+                addr = #{addr}
+            </when>
+        </choose>
+        WHERE iuser = #{iuser}
+    </update>
+    
+    <update id="updUserPic">
+        UPDATE t_user
+        SET
+        main_pic = #{main_pic}
+        WHERE iuser = #{iuser}
+    </update>
+
+    <select id="selUserDetail">
+        SELECT
+         iuser, uid, pw, nm, gender, addr, main_pic
+        FROM t_user
+        WHERE uid= #{uid}
+    </select>
+
+</mapper>
