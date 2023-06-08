@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserUpdDto {
-    private int pw;
+    private int iuser;
+    private String pw;
     private String addr;
 }

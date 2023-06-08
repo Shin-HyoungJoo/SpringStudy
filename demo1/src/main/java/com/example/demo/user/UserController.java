@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import com.example.demo.user.model.*;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private UserService service;
+    private final UserService service;
 
     @Autowired
     public UserController(UserService service) {
@@ -28,7 +29,12 @@ public class UserController {
         return service.updUser(dto);
     }
 
-    @PostMapping
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "" +
+            "리턴값 : " +
+            "(1) 로그인 성공 <br>" +
+            "(2) 아이디 없음 <br>" +
+            "(3) 비밀번호 다름")
     public int Login(@RequestBody UserLoginDto dto) {
         return service.Login(dto);
     }

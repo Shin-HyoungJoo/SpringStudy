@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.board.BoardMapper">
-    <insert id = "insBoard">
+    <insert id = "insBoard" useGeneratedKeys="true" keyProperty="iboard">
         INSERT INTO t_board
         (title, ctnt, iuser)
         VALUES
@@ -25,7 +25,7 @@
         AND iuser = #{iuser}
     </delete>
 
-    <select id="selBoard">
+    <select id="selBoard" resultType="BoardVo">
         SELECT A.iboard, A.title, A.created_at, B.nm writer, B.main_pic
         FROM t_board A
         INNER JOIN t_user B
@@ -34,7 +34,7 @@
         LIMIT #{startIdx}, #{row}
     </select>
 
-    <select id="selBoardDetail">
+    <select id="selBoardDetail" resultType="BoardDetailVo">
         SELECT A.iboard, A.title, A.ctnt, A.created_at, A.updated_at, B.nm writer, B.main_pic
         FROM t_board A
         INNER JOIN t_user B

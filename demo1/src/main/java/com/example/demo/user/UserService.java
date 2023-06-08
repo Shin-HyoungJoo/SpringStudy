@@ -14,8 +14,8 @@ import java.io.IOException;
 
 @Service
 public class UserService {
-    private UserMapper mapper;
-    private CommonUtils utils;
+    private final UserMapper mapper;
+    private final CommonUtils utils;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -27,10 +27,16 @@ public class UserService {
     }
 
     public int insUser (UserInsDto dto) {
+        String hashPw = utils.encodeSha256(dto.getPw());
+        dto.setPw(hashPw);
         return mapper.insUser(dto);
     }
 
     public int updUser (UserUpdDto dto) {
+        if (dto.getPw() != null) {
+            String hashPw = utils.encodeSha256(dto.getPw());
+            dto.setPw(hashPw);
+        }
         return mapper.updUser(dto);
     }
 
@@ -46,7 +52,7 @@ public class UserService {
 
         try {
             pic.transferTo(file);
-            dto.setIuser(dto.getIuser());
+            dto.setMain_pic(dicPath);
         } catch (IOException e) {
             e.printStackTrace();
         }

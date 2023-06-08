@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 public class BoardController {
-    private BoardService service;
+    private final BoardService service;
 
     @Autowired
     public BoardController(BoardService service) {
@@ -19,7 +19,11 @@ public class BoardController {
 
     @PostMapping
     public int insBoard(@RequestBody BoardInsDto dto) {
-        return service.insBoard(dto);
+        BoardEntity entity = new BoardEntity();
+        entity.setTitle(dto.getTitle());
+        entity.setCtnt(dto.getCtnt());
+        entity.setIuser(dto.getIuser());
+        return service.insBoard(entity);
     }
 
     @PutMapping
@@ -42,9 +46,13 @@ public class BoardController {
     }
 
     @GetMapping("/{iboard}")
-    public BoardDetailVo getBoardDetail(@PathVariable int iboard) {
-        BoardDetailDto dto = new BoardDetailDto();
+    public BoardDetailCmtVo getBoardDetail(@PathVariable int iboard,
+                                           @RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "5") int row) {
+        BoardDto dto = new BoardDto();
         dto.setIboard(iboard);
+        dto.setPage(page);
+        dto.setRow(row);
         return service.selBoardDetail(dto);
     }
 }

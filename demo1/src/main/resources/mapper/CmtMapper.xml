@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.cmt.CmtMapper">
+    <insert id="insCmt" useGeneratedKeys="true" keyProperty="iboardCmt">
+        INSERT INTO t_board_cmt
+        (iboard, iuser, ctnt)
+        VALUES
+        (#{iboard},#{iuser},#{ctnt})
+    </insert>
+
+    <delete id="delCmt">
+        DELETE FROM t_board_cmt
+        WHERE
+        <choose>
+            <when test="iboardCmt > 0 and iuser > 0">
+                iboard_cmt = #{iboardCmt}
+                AND iuser = #{iuser}
+            </when>
+        </choose>
+    </delete>
+
+    <update id="updCmt">
+        UPDATE t_board_cmt
+        SET
+        ctnt = #{ctnt},
+        updated_at = current_timestamp
+        WHERE iuser = #{iuser}
+        AND iboard_cmt = #{iboardCmt}
+    </update>
+
+    <select id="selCmt">
+        select A.iboard_cmt, A.iboard, A.iuser, A.ctnt, A.created_at, B.nm, B.main_pic
+        from t_board_cmt A
+        inner join t_user B
+        on A.iuser = B.iuser
+        where iboard = #{iboard}
+        order by iboard_cmt desc
+        limit #{startIdx}, #{row}
+    </select>
+
+    <select id="selCountCmt" resultType="Long">
+        SELECT count(iboard)
+        FROM t_board_cmt
+        WHERE iboard = #{iboard}
+    </select>
+
+</mapper>
