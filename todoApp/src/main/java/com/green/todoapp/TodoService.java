@@ -1,9 +1,6 @@
 package com.green.todoapp;
 
-import com.green.todoapp.model.TodoEntity;
-import com.green.todoapp.model.TodoInsDto;
-import com.green.todoapp.model.TodoUpdDto;
-import com.green.todoapp.model.TodoVo;
+import com.green.todoapp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,23 +15,33 @@ public class TodoService {
         this.mapper = mapper;
     }
 
-    public Long insTodo(TodoInsDto dto) {
+    public int insTodo(TodoInsDto dto) {
         TodoEntity entity = new TodoEntity();
         entity.setCtnt(dto.getCtnt());
-        Long result = mapper.insTodo(entity);
+        int result = mapper.insTodo(entity);
         System.out.println(result);
-        if (result == 1L) {
+        if (result == 1) {
             return entity.getItodo();//itodo값
         }
-        return 0L;
+        return 0;
     }
 
     public List<TodoVo> selTodo () {
         return mapper.selTodo();
     }
 
-    public Long updTodo(TodoUpdDto dto) {
-        mapper.updTodo(dto);
-        return null;
+    public int updFinish(TodoFinishDto dto) {
+        TodoEntity entity = new TodoEntity();
+        entity.setItodo(dto.getItodo());
+
+        int result = mapper.updFinish(entity);
+        System.out.println(entity.getFinishYn());
+        return entity.getFinishYn();
+    }
+
+    public int delTodo(int itodo) {
+        TodoEntity entity = new TodoEntity();
+        entity.setItodo(itodo);
+        return mapper.delTodo(entity);
     }
 }

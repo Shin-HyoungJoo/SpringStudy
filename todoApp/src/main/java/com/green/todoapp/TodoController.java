@@ -1,7 +1,8 @@
 package com.green.todoapp;
 
+import com.green.todoapp.model.TodoDelDto;
 import com.green.todoapp.model.TodoInsDto;
-import com.green.todoapp.model.TodoUpdDto;
+import com.green.todoapp.model.TodoFinishDto;
 import com.green.todoapp.model.TodoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class TodoController {
     }
 
     @PostMapping
-    public Long postTodo(@RequestBody TodoInsDto dto) {
+    public int postTodo(@RequestBody TodoInsDto dto) {
         return service.insTodo(dto);
     }
 
@@ -29,7 +30,17 @@ public class TodoController {
     }
 
     @PatchMapping
-    public Long patchTodo(@RequestBody TodoUpdDto dto) {
-        return service.updTodo(dto);
+    public int patchTodo(@RequestBody TodoFinishDto dto) {
+        return service.updFinish(dto);
+    }
+
+//    @DeleteMapping
+//    public int delTodo(@RequestBody TodoDelDto dto) {
+//        return service.delTodo(dto);
+//    }
+
+    @DeleteMapping
+    public int delTodo(@RequestParam int itodo) {
+        return service.delTodo(itodo);
     }
 }

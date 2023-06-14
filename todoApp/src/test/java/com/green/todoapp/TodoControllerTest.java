@@ -1,5 +1,8 @@
 package com.green.todoapp;
 
+import com.google.gson.Gson;
+import com.green.todoapp.model.TodoDelDto;
+import com.green.todoapp.model.TodoFinishDto;
 import com.green.todoapp.model.TodoInsDto;
 import com.green.todoapp.model.TodoVo;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +21,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any; //any
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,15 +44,20 @@ class TodoControllerTest {
         //given(환경설정) - when(데이터 값 가져옴) - then(검증) 패턴
 
         //given - 테스트 세팅 - 가짜 업무를 준다
-        given(service.insTodo(any(TodoInsDto.class))).willReturn(3L);
+        given(service.insTodo(any(TodoInsDto.class))).willReturn(3);
         //Mockito 임포트
         //service.insTodo() 메서드가 호출되었을 때,
         //인자로 전달되는 TodoInsDto 객체의 타입은 중요하지 않고, 아무 객체나 전달될 수 있다 (any(TodoInsDto.class)),
-        //이 메서드는 3L을 반환하도록 설정한다.
+        //이 메서드는 3을 반환하도록 설정한다.
 
         //when - 실제 실행
-        String json = "{\"ctnt\": \"빨래 개기\"}";
+        TodoInsDto dto = new TodoInsDto();
+        dto.setCtnt("빨래 개기");
 
+        Gson gson = new Gson();
+
+//      String json = "{\"ctnt\": \"빨래 개기\"}";
+        String json = gson.toJson(dto);
         ResultActions ra = mvc.perform(post("/api/todo")
                 ///api의 todo 경로에 대해 HTTP POST 요청을 시뮬레이션하는 코드입니다.
                 .content(json)  //내용은 json변수 안의 내용
@@ -77,8 +86,8 @@ class TodoControllerTest {
 
         //given
         List<TodoVo> mockList = new ArrayList<>();
-        mockList.add(new TodoVo(1L, "테스트", "2077", null,1,"2023-01-01"));
-        mockList.add(new TodoVo(2L, "테스트2", "2077", "abc.jpg",0,"2023-11-11"));
+        mockList.add(new TodoVo(1, "테스트", "2077", null,1,"2023-01-01"));
+        mockList.add(new TodoVo(2, "테스트2", "2077", "abc.jpg",0,"2023-11-11"));
         given(service.selTodo()).willReturn(mockList);
 
         //when
@@ -93,5 +102,49 @@ class TodoControllerTest {
                 .andDo(print());
 
         verify(service).selTodo();
+    }
+
+    @Test
+    @DisplayName("TODO - 완료처리 토글")
+    void patchTodo() throws Exception {
+        //given
+        given(service.updFinish(any())).willReturn(1);
+
+        TodoFinishDto dto = new TodoFinishDto();
+        dto.setItodo(1);
+        Gson gson = new Gson();
+        String json = gson.toJson(dto);
+
+        //when
+        ResultActions ra = mvc.perform(patch("/api/todo")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        ra.andExpect(status().isOk())   //고정 결과가 정상(200)이냐
+                .andExpect(content().string("1"))  //return이 1이냐
+                .andDo(print());    //고정
+
+        verify(service).updFinish(any());
+    }
+
+    @Test
+    @DisplayName("TODO - 삭제")
+    void delTodo() throws Exception {
+        //get
+        int itodo = 10;
+        given(service.delTodo(anyInt())).willReturn(itodo);
+
+        //when
+
+        ResultActions ra = mvc.perform(delete("/api/todo")
+                .param("itodo", String.valueOf(itodo)));
+        //쿼리스트링은 content,contentType 필요없다
+        //.param으로 적거나 /api/todo뒤에 쿼리주소까지 적기.)
+        ra.andExpect(status().isOk())
+                .andExpect(content().string("10"))
+                .andDo(print());
+
+        verify(service).delTodo(anyInt());
     }
 }

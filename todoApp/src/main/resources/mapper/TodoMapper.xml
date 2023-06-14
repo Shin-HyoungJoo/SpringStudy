@@ -12,15 +12,26 @@
 
     <select id="selTodo" resultType="TodoVo">
         SELECT itodo, ctnt, created_at createdAt, pic, finish_yn finishYn
-        ,finished_at finishedAt
+        ,finish_at finishAt
         FROM t_todo
         WHERE del_yn = 0
     </select>
 
-    <update id="updTodo">
+    <update id="updFinish">
+        <selectKey keyProperty="finishYn" resultType="TodoEntity" order="AFTER">
+            SELECT finish_yn finishYn FROM t_todo WHERE itodo = #{itodo}
+        </selectKey>
         UPDATE t_todo
         SET
-        finish_at = CURRENT_TIMESTAMP
+        finish_yn = 1 - finish_yn,
+        finish_at = if(finish_at is NULL, CURRENT_TIMESTAMP(), NULL)
         WHERE itodo = #{itodo}
     </update>
+
+    <delete id="delTodo">
+        UPDATE t_todo
+        SET
+        del_Yn = 1
+        WHERE itodo = #{itodo}
+    </delete>
 </mapper>

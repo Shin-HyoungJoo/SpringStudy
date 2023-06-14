@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Getter
 @AllArgsConstructor
 public class TodoVo {
-    private Long itodo;
+    private int itodo;
     private String ctnt;
     private String createdAt;
     private String pic;
     private int finishYn;
-    private String finishedAt;
+    private String finishAt;
 }
